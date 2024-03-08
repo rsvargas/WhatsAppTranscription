@@ -51,9 +51,16 @@ function start(client) {
             });
         }
         // console.log(message);
+        const should_transcribe = (
+            message.isGroupMsg === false || (
+                allowedGroups.indexOf(message.chatId) !== -1 ||
+                allowedGroups.indexOf('*') !== -1
+            )
+        );
 
-        if (((allowedGroups.indexOf(message.chatId) !== -1) || message.isGroupMsg === false) && message.mimetype && message.mimetype.includes("audio")) {
-            const filename = `${path_mp3}/${message.t}.${mime.extension(message.mimetype)}`;
+        if (should_transcribe && message.mimetype && message.mimetype.includes("audio")) {
+            const suffix = Math.floor(Math.random() * 1000);
+            const filename = `${path_mp3}/${message.t}-${suffix}.${mime.extension(message.mimetype)}`;
             const mediaData = await wa.decryptMedia(message);
 
             fs.writeFile(filename, mediaData, async function (err) {

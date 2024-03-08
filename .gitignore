@@ -3,3 +3,9 @@ node_modules/
 TranscricaoDeAudio.data.json
 _IGNORE_TranscricaoDeAudio/
 package-lock.json
+
+# managed by open-wa
+**.data.json
+**.node-persist**
+**_IGNORE_**
+# end managed by open-wa
