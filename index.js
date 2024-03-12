@@ -12,7 +12,7 @@ const openai = new OpenAIApi(configuration);
 const path_mp3 = process.env.PATH_MP3 ? process.env.PATH_MP3 : '.' ;
 const sessionDataPath = process.env.PATH_SESSION ? process.env.PATH_SESSION : './' ;
 const groups = process.env.GROUPS ? process.env.GROUPS : '' ;
-const allowedGroups = groups.split(',');
+const allowedGroups = groups.split(',').map(item => item.trim());
 const use_openai_api = process.env.OPENAI_API_KEY != '';
 
 console.log(`Will transcribe audio messages from these groups = ${allowedGroups}`);
@@ -37,7 +37,7 @@ function start(client) {
         {
             const d = new Date(message.t * 1000).toISOString();
             const orig = message.notifyName;
-            const dest = message.chat.contact.name;
+            const dest = message.chat?.contact?.name;
             const isGroup = (message.isGroupMsg === true)? "(GROUP)": "";
             const msg = message.body;
             const isAudio = (message.mimetype && message.mimetype.includes("audio")) ? "(AUDIO)": "";
@@ -103,7 +103,7 @@ function start(client) {
                             console.log(`stderr: ${stderr}`);
                             return;
                         }
-    
+
                         exec(`./whisper -otxt --model ggml-small.bin -l pt ${filename}.wav`, (error, stdout, stderr) => {
                             if (error) {
                                 console.log(`error: ${error.message}`);
@@ -123,10 +123,10 @@ function start(client) {
                         }); //exec whisper
                     }); //exec ffpmpeg
 
-                }
-            });
+                }; //if use_openai
+            }); //fs.writefile
 
-        }
+        } //if should_transcribe
 
-    });
-}
+    }); //client.onAnyMessage
+} //start()
